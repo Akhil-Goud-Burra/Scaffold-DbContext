@@ -70,5 +70,28 @@ namespace crud.Controllers
             }
         }
 
+
+
+
+        // Deleting a Employee
+        [HttpDelete]
+        public IActionResult DeleteEmployee([FromBody] JobDescriptionDeleteDTO Input_Form_Data)
+        {
+            try
+            {
+                var employeeToBeDeleted = appDbContext.JobDescriptions.FirstOrDefault(u => u.JobDescriptionId == (Input_Form_Data.JobDescriptionId));
+
+
+                appDbContext.JobDescriptions.Remove(employeeToBeDeleted);
+                appDbContext.SaveChanges();
+
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, new { Message = "Unknown Error: An error occurred while deleting JobDescriptions", Details = ex.Message });
+            }
+        }
+
     }
 }
