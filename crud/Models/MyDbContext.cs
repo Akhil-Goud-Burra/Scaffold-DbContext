@@ -34,11 +34,16 @@ public partial class MyDbContext : DbContext
     {
         modelBuilder.Entity<JobDescription>(entity =>
         {
-            entity.HasOne(d => d.Employee).WithMany(p => p.JobDescriptions).HasConstraintName("FK_JobDescription_EmployeeTable");
+            entity.HasOne(d => d.Employee)
+                  .WithMany(p => p.JobDescriptions)
+                  .HasForeignKey(d => d.EmployeeId) // Ensure the correct foreign key is used
+                  .OnDelete(DeleteBehavior.Cascade) // This enables cascade delete
+                  .HasConstraintName("FK_JobDescription_EmployeeTable");
         });
 
         OnModelCreatingPartial(modelBuilder);
     }
+
 
     partial void OnModelCreatingPartial(ModelBuilder modelBuilder);
 }

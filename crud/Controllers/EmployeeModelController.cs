@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace crud.Controllers
 {
-        [Route("api/employeeapi/")]
+    [Route("api/employeeapi/")]
     [ApiController]
 
     [ProducesResponseType(StatusCodes.Status200OK)]
@@ -43,6 +43,8 @@ namespace crud.Controllers
         }
 
 
+
+
         [HttpPost]
         public ActionResult<EmployeeCreateDTO> CreateEmployee([FromBody] EmployeeCreateDTO Input)
         {
@@ -62,6 +64,25 @@ namespace crud.Controllers
             catch (Exception ex)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError, new { Message = "An error occurred while retrieving employees", Details = ex.Message });
+            }
+        }
+
+
+        [HttpDelete]
+        public IActionResult DeleteEmployee([FromBody] EmployeeDeleteDTO Input_Form_Data)
+        {
+            try
+            {
+                var employeeToBeDeleted = appDbContext.EmployeeTables.FirstOrDefault(u => u.Id == (Input_Form_Data.Id));
+
+                appDbContext.EmployeeTables.Remove(employeeToBeDeleted);
+                appDbContext.SaveChanges();
+
+                return StatusCode(204, "Employee has been successfully deleted.");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, new { Message = "Unknown Error: An error occurred while deleting employees", Details = ex.Message });
             }
         }
 
