@@ -33,9 +33,7 @@ namespace crud.Controllers
         public ActionResult<IEnumerable<JobDescription>> GetAllJobDescriptions()
         {
 
-            var All_JobDescriptions = appDbContext.JobDescriptions
-                                         .Include(j => j.Employee) // Eagerly load the related Employee
-                                         .ToList();
+            var All_JobDescriptions = appDbContext.JobDescriptions.ToList();
 
             if (All_JobDescriptions == null || !All_JobDescriptions.Any())
             {
@@ -90,6 +88,29 @@ namespace crud.Controllers
             catch (Exception ex)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError, new { Message = "Unknown Error: An error occurred while deleting JobDescriptions", Details = ex.Message });
+            }
+        }
+
+
+        [HttpPut]
+        public IActionResult UpdateJobDescription([FromBody] JobDescriptionUpdateDTO Input_Form_Data)
+        {
+            try
+            {
+                var ExistingEmployee = appDbContext.JobDescriptions.Find(Input_Form_Data.JobDescriptionId);
+
+                ExistingEmployee.JobTitle = Input_Form_Data.JobTitle;
+                ExistingEmployee.StartDate = Input_Form_Data.StartDate;
+                ExistingEmployee.EndDate = Input_Form_Data.EndDate;
+
+                appDbContext.JobDescriptions.Update(ExistingEmployee);
+                appDbContext.SaveChanges();
+
+                return Ok(ExistingEmployee);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, new { Message = "Unknown Error: An error occurred while Updating JobDescription", Details = ex.Message });
             }
         }
 

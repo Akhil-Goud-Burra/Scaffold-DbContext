@@ -86,5 +86,30 @@ namespace crud.Controllers
             }
         }
 
+
+
+        [HttpPut]
+        public IActionResult UpdateEmployee([FromBody] EmployeeUpdateDTO Input_Form_Data)
+        {
+            try
+            {
+                var ExistingEmployee = appDbContext.EmployeeTables.Find(Input_Form_Data.Id);
+
+                ExistingEmployee.Firstname = Input_Form_Data.Firstname;
+                ExistingEmployee.Lastname = Input_Form_Data.Lastname;
+
+                appDbContext.EmployeeTables.Update(ExistingEmployee);
+                appDbContext.SaveChanges();
+
+                return Ok(ExistingEmployee);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, new { Message = "Unknown Error: An error occurred while Updating employees", Details = ex.Message });
+            }
+        }
+
+
+
     }
 }
