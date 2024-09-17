@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using crud.Models.UserModel;
 using Microsoft.EntityFrameworkCore;
 
 namespace crud.Models;
@@ -14,6 +15,8 @@ public partial class MyDbContext : DbContext
     {
         _configuration = configuration;
     }
+
+    public virtual DbSet<Users> UsersTable { get; set; }
 
     public virtual DbSet<EmployeeTable> EmployeeTables { get; set; }
 
