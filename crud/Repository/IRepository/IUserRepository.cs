@@ -1,4 +1,5 @@
 ﻿using crud.Models.LoginRequestDTO;
+using crud.Models.LoginResponseDTO;
 using crud.Models.RegistrationRequestDTO;
 using crud.Models.UserModel;
 
@@ -8,7 +9,7 @@ namespace crud.Repository.IRepository
     {
         bool IsUniqueUser( string UserName );
 
-        Task<LoginRequestDTO> Login(LoginRequestDTO loginRequestDTO);
+        LoginResponseDTO Login(LoginRequestDTO loginRequestDTO);
 
         Users Register(RegistrationRequestDTO registrationRequestDTO);
     }

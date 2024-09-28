@@ -1,5 +1,6 @@
 ﻿using crud.Models;
 using crud.Models.EmoloyeeModelDTO;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -45,6 +46,7 @@ namespace crud.Controllers
 
 
 
+
         [HttpPost]
         public ActionResult<EmployeeCreateDTO> CreateEmployee([FromBody] EmployeeCreateDTO Input)
         {
@@ -67,6 +69,8 @@ namespace crud.Controllers
             }
         }
 
+        
+
 
         [HttpDelete]
         public IActionResult DeleteEmployee([FromBody] EmployeeDeleteDTO Input_Form_Data)
@@ -85,6 +89,8 @@ namespace crud.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, new { Message = "Unknown Error: An error occurred while deleting employees", Details = ex.Message });
             }
         }
+
+
 
 
 
