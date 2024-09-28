@@ -29,6 +29,7 @@ namespace crud.Controllers
 
         // Http Get Request
         [HttpGet]
+        [Authorize]
         public ActionResult<IEnumerable<EmployeeTable>> GetAllEmployees()
         {
             var All_Employees = appDbContext.EmployeeTables
