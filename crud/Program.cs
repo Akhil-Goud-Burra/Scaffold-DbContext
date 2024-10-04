@@ -7,61 +7,77 @@ using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Microsoft.AspNetCore.Mvc;
-
+using Microsoft.OpenApi.Models;
+using Microsoft.AspNetCore.Mvc.ApiExplorer;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
+// Adding API Versioning
+builder.Services.AddApiVersioning(options =>
+{
+    options.DefaultApiVersion = new ApiVersion(1, 0);
+    options.AssumeDefaultVersionWhenUnspecified = true;
+    options.ReportApiVersions = true;
+});
 
-//Adding Api Versioning
-builder.Services.AddApiVersioning
-    (
-        options => 
+// Add versioned API explorer for Swagger generation
+builder.Services.AddVersionedApiExplorer(options =>
+{
+    options.GroupNameFormat = "'v'VVV";
+    options.SubstituteApiVersionInUrl = true;
+});
+
+// Add Swagger services with versioning
+builder.Services.AddSwaggerGen(options =>
+{
+    // Define multiple Swagger document configurations for different API versions
+    options.SwaggerDoc("v1", new OpenApiInfo { Title = "Employee API", Version = "v1" });
+    options.SwaggerDoc("v2", new OpenApiInfo { Title = "Employee API", Version = "v2" });
+
+    // Enable JWT Bearer token in Swagger (if applicable)
+    options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    {
+        Description = "JWT Authorization header using the Bearer scheme. Example: 'Bearer {token}'",
+        Name = "Authorization",
+        In = ParameterLocation.Header,
+        Type = SecuritySchemeType.ApiKey,
+        Scheme = "Bearer"
+    });
+
+    options.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
         {
-            //To Specify Version
-            options.DefaultApiVersion = new ApiVersion(1, 0);
-
-            options.AssumeDefaultVersionWhenUnspecified = true;
-
-            options.ReportApiVersions = true;
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference
+                {
+                    Type = ReferenceType.SecurityScheme,
+                    Id = "Bearer"
+                }
+            },
+            new string[] { }
         }
-    );
+    });
+});
 
-
-/*
-//Version Mapping
-builder.Services.AddVersionedApiExplorer
-    (
-        options =>
-        {
-            options.GroupNameFormat = " 'v'VVV ";
-        }
-    );
-*/
-
-
-
-// For Adding IRepository
+// Add IRepository
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 
-//ReferenceHandler
+// ReferenceHandler
 builder.Services.AddControllers()
     .AddJsonOptions(options =>
     {
         options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.Preserve;
     });
 
-
+// Add DbContext
 builder.Services.AddDbContext<MyDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultSQLConnection")));
 
-
-// Adding Servicces for the Authentication
-
-//Fetching Key
+// Adding JWT Authentication
 var key = builder.Configuration.GetValue<string>("ApiSettings:Secret");
-  
 builder.Services.AddAuthentication(x =>
 {
     x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -74,33 +90,36 @@ builder.Services.AddAuthentication(x =>
     x.TokenValidationParameters = new TokenValidationParameters
     {
         ValidateIssuerSigningKey = true,
-        IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(key)), // Ensure 'key' is a valid string or variable containing the secret key.
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(key)),
         ValidateIssuer = false,
         ValidateAudience = false
     };
 });
 
-
-
-builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
-
+// Build the app
 var app = builder.Build();
+
+// Enable API versioning in Swagger
+var provider = app.Services.GetRequiredService<IApiVersionDescriptionProvider>();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
-    app.UseSwaggerUI();
+    app.UseSwaggerUI(options =>
+    {
+        // Register Swagger endpoints for each version
+        foreach (var description in provider.ApiVersionDescriptions)
+        {
+            options.SwaggerEndpoint($"/swagger/{description.GroupName}/swagger.json", description.GroupName.ToUpperInvariant());
+        }
+    });
 }
 
 app.UseHttpsRedirection();
 
-//Adding Authentication
+// Adding Authentication
 app.UseAuthentication();
-
 app.UseAuthorization();
 
 app.MapControllers();
