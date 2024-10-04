@@ -6,11 +6,41 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using Microsoft.AspNetCore.Mvc;
 
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+
+
+//Adding Api Versioning
+builder.Services.AddApiVersioning
+    (
+        options => 
+        {
+            //To Specify Version
+            options.DefaultApiVersion = new ApiVersion(1, 0);
+
+            options.AssumeDefaultVersionWhenUnspecified = true;
+
+            options.ReportApiVersions = true;
+        }
+    );
+
+
+/*
+//Version Mapping
+builder.Services.AddVersionedApiExplorer
+    (
+        options =>
+        {
+            options.GroupNameFormat = " 'v'VVV ";
+        }
+    );
+*/
+
+
 
 // For Adding IRepository
 builder.Services.AddScoped<IUserRepository, UserRepository>();
