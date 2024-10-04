@@ -5,12 +5,12 @@ namespace crud.Controllers
 
     [ApiController]
     [ApiVersion("2.0")]
-    [Route("api/employee")]
+    [Route("api/{v:apiVersion}/employee")] //URL based Versioning
 
     public class EmployeeV2Controller : Controller
     {
 
-        // https://localhost:7816/api/employee?api-version=2.0
+        // https://localhost:7816/api/2.0/employee
         [HttpGet]
         public IActionResult Get()
         {
