@@ -34,8 +34,9 @@ builder.Services.AddVersionedApiExplorer(options =>
 builder.Services.AddSwaggerGen(options =>
 {
     // Define multiple Swagger document configurations for different API versions
-    options.SwaggerDoc("v1", new OpenApiInfo { Title = "Employee API", Version = "v1" });
-    options.SwaggerDoc("v2", new OpenApiInfo { Title = "Employee API", Version = "v2" });
+
+    options.SwaggerDoc("v1", new OpenApiInfo { Title = "Employee API V1", Version = "v1" }); // For V1
+    options.SwaggerDoc("v2", new OpenApiInfo { Title = "Employee API V2", Version = "v2" }); // For V2
 
     // Enable JWT Bearer token in Swagger (if applicable)
     options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
@@ -107,12 +108,14 @@ var provider = app.Services.GetRequiredService<IApiVersionDescriptionProvider>()
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
+
     app.UseSwaggerUI(options =>
     {
-        // Register Swagger endpoints for each version
+
+        // Register Swagger endpoints for each version ( V1 and V2 )
         foreach (var description in provider.ApiVersionDescriptions)
         {
-            options.SwaggerEndpoint($"/swagger/{description.GroupName}/swagger.json", description.GroupName.ToUpperInvariant());
+            options.SwaggerEndpoint($"/swagger/{description.GroupName}/swagger.json", description.GroupName.ToUpperInvariant()); // For V1 and V2 Dynamic
         }
     });
 }

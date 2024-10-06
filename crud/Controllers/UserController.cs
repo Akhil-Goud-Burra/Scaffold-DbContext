@@ -8,6 +8,7 @@ namespace crud.Controllers
 
     [Route("api/UsersAuAr/")]
     [ApiController]
+    [ApiVersionNeutral] 
 
     public class UserController : Controller
     {
