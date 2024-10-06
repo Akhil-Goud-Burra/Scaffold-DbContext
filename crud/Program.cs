@@ -27,6 +27,7 @@ builder.Services.AddVersionedApiExplorer(options =>
 {
     options.GroupNameFormat = "'v'VVV";
     options.SubstituteApiVersionInUrl = true;
+
 });
 
 // Add Swagger services with versioning
