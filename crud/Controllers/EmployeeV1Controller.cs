@@ -4,18 +4,18 @@ namespace crud.Controllers
 {
 
     [ApiController]
-    [ApiVersion("1.0")]
+    [ApiVersion("1.0", Deprecated = true)]
     [Route("api/{v:apiVersion}/employee")] //URL based Versioning
 
     public class EmployeeV1Controller : Controller
     {
-
         // https://localhost:7816/api/1.0/employee
 
-        [HttpGet]
-        public IActionResult Get()
+        [HttpGet("getemployeesGet1")]
+        [ResponseCache(Duration = 30)]
+        public IActionResult Get1()
         {
-            return new OkObjectResult("employees from v1 controller");
+            return new OkObjectResult("employees from v11 controller");
         }
     }
 }

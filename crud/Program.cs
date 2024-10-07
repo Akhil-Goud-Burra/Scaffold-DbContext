@@ -76,6 +76,9 @@ builder.Services.AddControllers()
 builder.Services.AddDbContext<MyDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultSQLConnection")));
 
+//Caching Request
+builder.Services.AddResponseCaching();
+
 // Adding JWT Authentication
 var key = builder.Configuration.GetValue<string>("ApiSettings:Secret");
 builder.Services.AddAuthentication(x =>
