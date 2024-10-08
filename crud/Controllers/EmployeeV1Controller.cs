@@ -12,7 +12,7 @@ namespace crud.Controllers
         // https://localhost:7816/api/1.0/employee
 
         [HttpGet("getemployeesGet1")]
-        [ResponseCache(Duration = 30)]
+        [ResponseCache(CacheProfileName= "Default30")]
         public IActionResult Get1()
         {
             return new OkObjectResult("employees from v11 controller");

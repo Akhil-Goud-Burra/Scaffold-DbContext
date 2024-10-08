@@ -66,11 +66,24 @@ builder.Services.AddSwaggerGen(options =>
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 
 // ReferenceHandler
-builder.Services.AddControllers()
-    .AddJsonOptions(options =>
-    {
-        options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.Preserve;
-    });
+builder.Services.AddControllers
+    (
+        options =>
+        {
+            // Adding cache Profile
+            options.CacheProfiles.Add
+            (
+                "Default30", new CacheProfile() { Duration = 30 }
+            );
+        }
+    )
+    .AddJsonOptions
+    (
+        options =>
+        {
+            options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.Preserve;
+        }
+    );
 
 // Add DbContext
 builder.Services.AddDbContext<MyDbContext>(options =>
