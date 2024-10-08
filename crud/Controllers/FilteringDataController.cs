@@ -19,7 +19,7 @@ namespace crud.Controllers
 
         // Http Get Request
         [HttpGet("GetAllEmployees")]
-        public ActionResult<IEnumerable<EmployeeTable>> GetAllEmployees([FromQuery]String? Firstname , [FromQuery] String? Lastname)
+        public ActionResult<IEnumerable<EmployeeTable>> GetAllEmployees([FromQuery]String? Firstname , [FromQuery] String? Lastname , [FromQuery] String? SearchData)
         {
 
             List<EmployeeTable> All_Employees;
@@ -30,6 +30,12 @@ namespace crud.Controllers
                                             .Where(x => x.Firstname == Firstname || x.Lastname == Lastname)
                                             .Include(e => e.JobDescriptions) // This will include JobDescriptions in the query
                                             .ToList();
+            }
+            if(!string.IsNullOrEmpty(SearchData))
+            {
+                All_Employees = appDbContext.EmployeeTables
+                                .Where(x => x.Firstname.Contains(SearchData) || x.Lastname.Contains(SearchData))
+                                .ToList();
             }
             else
             {
